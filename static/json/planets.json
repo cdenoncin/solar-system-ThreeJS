@@ -1,0 +1,78 @@
+[
+    {
+        "name": "Mercury",
+        "radius": 0.05,
+        "distance": 4,
+        "speed": 0.001,
+        "inclination": 0.3926990816987241,
+        "info": "Information about Mercury",
+        "texture": "./assets/mercury.jpg"
+    },
+    {
+        "name": "Venus",
+        "radius": 0.08,
+        "distance": 6,
+        "speed": 0.0008,
+        "info": "Information about Venus",
+        "texture": "./assets/venus.jpg",
+        "inclination": 0.3926990816987241
+    },
+    {
+        "name": "Earth",
+        "radius": 0.1,
+        "distance": 8,
+        "speed": 0.0006,
+        "info": "Information about Earth",
+        "texture": "./assets/earth.jpg"
+    },
+    {
+        "name": "Mars",
+        "radius": 0.07,
+        "distance": 10,
+        "speed": 0.0005,
+        "inclination": 0.2617993877991494,
+        "info": "Information about Mars",
+        "texture": "./assets/mars.jpg"
+    },
+    {
+        "name": "Jupiter",
+        "radius": 0.18,
+        "distance": 14,
+        "speed": 0.0003,
+        "info": "Information about Jupiter",
+        "texture": "./assets/jupiter.jpg"
+    },
+    {
+        "name": "Saturn",
+        "radius": 0.15,
+        "distance": 18,
+        "speed": 0.0002,
+        "inclination": 0.1963495408493621,
+        "info": "Information about Saturn",
+        "texture": "./assets/saturn.jpg"
+    },
+    {
+        "name": "Uranus",
+        "radius": 0.12,
+        "distance": 22,
+        "speed": 0.0001,
+        "info": "Information about Uranus",
+        "texture": "./assets/uranus.jpg"
+    },
+    {
+        "name": "Neptune",
+        "radius": 0.11,
+        "distance": 26,
+        "speed": 0.00008,
+        "info": "Information about Neptune",
+        "texture": "./assets/neptune.jpg"
+    },
+    {
+        "name": "Pluton",
+        "radius": 0.04,
+        "distance": 30,
+        "speed": 0.00006,
+        "info": "Information about Pluton",
+        "texture": "./assets/pluton.jpg"
+    }
+]
