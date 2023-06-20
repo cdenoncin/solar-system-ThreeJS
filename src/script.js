@@ -6,7 +6,8 @@ const scene = new THREE.Scene();
 
 // Sun
 const sunGeometry = new THREE.SphereGeometry(1, 32, 16);
-const sunMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+const sunTexture = new THREE.TextureLoader().load("./assets/sun.jpg");
+const sunMaterial = new THREE.MeshLambertMaterial({ map: sunTexture });
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 scene.add(sun);
 
@@ -18,6 +19,7 @@ const planetsData = [
     distance: 4,
     speed: 0.001,
     info: "Information about Mercury",
+    texture: "./assets/mercury.jpg",
   },
   {
     name: "Venus",
@@ -25,6 +27,7 @@ const planetsData = [
     distance: 6,
     speed: 0.0008,
     info: "Information about Venus",
+    texture: "./assets/venus.jpg",
   },
   {
     name: "Earth",
@@ -32,6 +35,7 @@ const planetsData = [
     distance: 8,
     speed: 0.0006,
     info: "Information about Earth",
+    texture: "./assets/earth.jpg",
   },
   {
     name: "Mars",
@@ -39,6 +43,7 @@ const planetsData = [
     distance: 10,
     speed: 0.0005,
     info: "Information about Mars",
+    texture: "./assets/mars.jpg",
   },
   {
     name: "Jupiter",
@@ -46,6 +51,7 @@ const planetsData = [
     distance: 14,
     speed: 0.0003,
     info: "Information about Jupiter",
+    texture: "./assets/jupiter.jpg",
   },
   {
     name: "Saturn",
@@ -53,6 +59,7 @@ const planetsData = [
     distance: 18,
     speed: 0.0002,
     info: "Information about Saturn",
+    texture: "./assets/saturn.jpg",
   },
   {
     name: "Uranus",
@@ -60,6 +67,7 @@ const planetsData = [
     distance: 22,
     speed: 0.0001,
     info: "Information about Uranus",
+    texture: "./assets/uranus.jpg",
   },
   {
     name: "Neptune",
@@ -67,13 +75,15 @@ const planetsData = [
     distance: 26,
     speed: 0.00008,
     info: "Information about Neptune",
+    texture: "./assets/neptune.jpg",
   },
   {
-    name: "Pluto",
+    name: "Pluton",
     radius: 0.04,
     distance: 30,
     speed: 0.00006,
-    info: "Information about Pluto",
+    info: "Information about Pluton",
+    texture: "./assets/pluton.jpg",
   },
 ];
 
@@ -82,7 +92,8 @@ const orbitLines = [];
 
 planetsData.forEach((planetData) => {
   const planetGeometry = new THREE.SphereGeometry(planetData.radius, 32, 16);
-  const planetMaterial = new THREE.MeshLambertMaterial();
+  const planetTexture = new THREE.TextureLoader().load(planetData.texture);
+  const planetMaterial = new THREE.MeshLambertMaterial({ map: planetTexture });
   const planet = new THREE.Mesh(planetGeometry, planetMaterial);
   scene.add(planet);
   planetMeshes.push({ mesh: planet, ...planetData });
