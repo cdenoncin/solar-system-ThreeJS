@@ -2,6 +2,12 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {TWEEN} from 'three/examples/jsm/libs/tween.module.min.js';
 
+// Data
+let targetPlanet = null;
+let isAnimationPaused = false;
+let targetLookAt;
+let isZoomingIn = true;
+
 // Scene
 const scene = new THREE.Scene();
 
@@ -114,7 +120,7 @@ planetsData.forEach((planetData) => {
 
     const planetGeometry = new THREE.SphereGeometry(radius, 32, 16);
     const planetTexture = new THREE.TextureLoader().load(planetData.texture);
-    const planetMaterial = new THREE.MeshLambertMaterial({map: planetTexture});
+    const planetMaterial = new THREE.MeshLambertMaterial({map: planetTexture, emissive: '0xffffff', emissiveIntensity: .2});
     const planet = new THREE.Mesh(planetGeometry, planetMaterial);
     scene.add(planet);
     planetMeshes.push({mesh: planet, ...planetData});
@@ -162,9 +168,27 @@ const raycaster = new THREE.Raycaster();
 
 // Create a vector to store the mouse coordinates
 const mouse = new THREE.Vector2();
+const handleCloseButtonClick = () => {
+    // Animation de zoom sortant
+    const zoomAnimationDuration = 1000; // Durée de l'animation en millisecondes
+    const currentCameraPosition = camera.position.clone();
+    const zoomTween = new TWEEN.Tween(currentCameraPosition)
+        .to(originalCameraPosition, zoomAnimationDuration)
+        .easing(TWEEN.Easing.Quadratic.InOut) // Type d'interpolation pour l'animation
+        .onUpdate(() => {
+            camera.position.copy(currentCameraPosition);
+            camera.lookAt(targetLookAt);
+        })
+        .onComplete(() => {
+            // Réactiver les contrôles
+            controls.enabled = true;
+            changePausePlay();
+        })
+        .start();
 
-// Function to handle click event
-// Fonction de gestion de l'événement de clic
+    // Masquer la modal
+    modal.style.display = 'none';
+};
 const handleClick = (event) => {
     // Coordonnées de la souris normalisées
     mouse.x = (event.clientX / sizes.width) * 2 - 1;
@@ -178,17 +202,18 @@ const handleClick = (event) => {
 
     // S'il y a des intersections, prendre la première
     if (intersects.length > 0) {
+        isZoomingIn = true;
+        controls.enabled = false;
         const intersectedPlanet = intersects[0].object;
+        targetPlanet = intersectedPlanet;
         const planetData = planetMeshes.find((planet) => planet.mesh === intersectedPlanet);
 
-        // Zoom sur la planète
-        const zoomDistance = planetData.radius * 4; // Distance de zoom personnalisée
-        const targetZoomPosition = intersectedPlanet.position.clone().normalize().multiplyScalar(zoomDistance);
-        const targetLookAt = intersectedPlanet.position.clone();
-
         // Animation de zoom progressif
+        const zoomDistance = planetData.radius * 0.01; // Distance de zoom personnalisée
         const zoomAnimationDuration = 1000; // Durée de l'animation en millisecondes
         const currentCameraPosition = camera.position.clone();
+        const targetZoomPosition = intersectedPlanet.position.clone().normalize().multiplyScalar(zoomDistance);
+        targetLookAt = intersectedPlanet.position.clone();
         const zoomTween = new TWEEN.Tween(currentCameraPosition)
             .to(targetZoomPosition, zoomAnimationDuration)
             .easing(TWEEN.Easing.Quadratic.InOut) // Type d'interpolation pour l'animation
@@ -197,13 +222,19 @@ const handleClick = (event) => {
                 camera.lookAt(targetLookAt);
             })
             .onComplete(() => {
-                // Afficher les informations de la planète dans le modal après le délai
-                const modalDelay = 500; // Délai en millisecondes
-                setTimeout(() => {
-                    planetName.textContent = planetData.name;
-                    planetInfo.textContent = planetData.info;
-                    modal.style.display = 'block';
-                }, modalDelay);
+                if (isZoomingIn) {
+                    // Animation de zoom entrant terminée
+                    // Mettre à jour les informations de la planète dans la modal
+                    const modalDelay = 500;
+                    setTimeout(() => {
+                        planetName.textContent = planetData.name;
+                        planetInfo.textContent = planetData.info;
+                        modal.style.display = 'block';
+                    }, modalDelay);
+                } else {
+                    // Animation de zoom sortant terminée
+                    controls.enabled = true;
+                }
             })
             .start();
 
@@ -225,6 +256,7 @@ const sizes = {
 // Camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height);
 camera.position.set(0, 20, 55);
+const originalCameraPosition = camera.position.clone();
 scene.add(camera);
 
 // Renderer
@@ -242,27 +274,6 @@ const modal = document.getElementById('modal');
 const planetName = document.getElementById('planet-name');
 const planetInfo = document.getElementById('planet-info');
 
-// Event listener for planet click
-// planetMeshes.forEach((planetData) => {
-//     const {mesh, info} = planetData;
-//
-//     mesh.addEventListener('mouseenter', () => {
-//         // Zoom sur la planète
-//         const zoomDistance = radius * 4; // Distance de zoom personnalisée
-//         const zoomPosition = mesh.position.clone().normalize().multiplyScalar(zoomDistance);
-//         camera.position.copy(zoomPosition);
-//         camera.lookAt(mesh.position);
-//
-//         // Mettre en pause l'animation
-//         makePause();
-//
-//         // Afficher les informations de la planète dans le modal
-//         planetName.textContent = planetData.name;
-//         planetInfo.textContent = info;
-//         modal.style.display = 'block';
-//     });
-// });
-
 // Event listener for modal close button
 const closeButton = document.querySelector('.close');
 closeButton.addEventListener('click', () => {
@@ -270,11 +281,6 @@ closeButton.addEventListener('click', () => {
 });
 
 const pauseButton = document.getElementById('pauseButton');
-pauseButton.addEventListener('click', () => {
-    changePausePlay();
-});
-
-let isAnimationPaused = false;
 
 const changePausePlay = () => {
     isAnimationPaused = !isAnimationPaused;
@@ -293,18 +299,20 @@ const makePause = () => {
 
 // Animation
 const animate = () => {
-    controls.update();
+    if (controls.enabled) {
+        controls.update();
+    }
 
     TWEEN.update();
     if (!isAnimationPaused) {
         sun.rotation.y += 0.003;
-        sun.rotation.x += 0.001;
+        sun.rotation.z += 0.001;
 
         const elapsedTime = Date.now();
 
         planetMeshes.forEach((planetData) => {
             const {mesh, distance, speed, inclination = 0} = planetData;
-            mesh.rotation.y += 0.003;
+            mesh.rotation.y += 0.006;
             mesh.rotation.x += 0.001;
 
             const angle = (elapsedTime * speed) % (2 * Math.PI); // Angle en fonction du temps écoulé
@@ -325,19 +333,20 @@ const animate = () => {
 
 animate();
 
+pauseButton.addEventListener('click', () => {
+    changePausePlay();
+});
+
+closeButton.addEventListener('click', handleCloseButtonClick);
+
+window.addEventListener('click', handleClick);
 window.addEventListener('resize', () => {
-    // Mettre à jour les tailles
     sizes.width = window.innerWidth;
     sizes.height = window.innerHeight;
-
-    // Mettre à jour la caméra
     camera.aspect = sizes.width / sizes.height;
     camera.updateProjectionMatrix();
 
-    // Mettre à jour le rendu
     renderer.setSize(sizes.width, sizes.height);
 });
 
-window.requestAnimationFrame(animate);
 
-window.addEventListener('click', handleClick);
