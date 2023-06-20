@@ -95,9 +95,9 @@ const planetMeshes = [];
 const orbitLines = [];
 
 planetsData.forEach((planetData) => {
-  // const { radius, distance, speed, inclination = 0 } = planetData;
+  const { radius, distance, speed, inclination = 0 } = planetData;
 
-  const planetGeometry = new THREE.SphereGeometry(planetData.radius, 32, 16);
+  const planetGeometry = new THREE.SphereGeometry(radius, 32, 16);
   const planetTexture = new THREE.TextureLoader().load(planetData.texture);
   const planetMaterial = new THREE.MeshLambertMaterial({map: planetTexture});
   const planet = new THREE.Mesh(planetGeometry, planetMaterial);
@@ -107,8 +107,8 @@ planetsData.forEach((planetData) => {
   const orbitCurve = new THREE.EllipseCurve(
     0,
     0,
-    planetData.distance,
-    planetData.distance,
+    distance,
+    distance,
     0,
     2 * Math.PI,
     false,
@@ -122,14 +122,20 @@ planetsData.forEach((planetData) => {
     (point) => new THREE.Vector3(point.x, 0, point.y)
   );
 
-  // Appliquer l'inclinaison aux points de la trajectoire
+  // inclinaison
   const inclinationMatrix = new THREE.Matrix4().makeRotationX(inclination);
   orbitPoints3D.forEach((point) => {
     point.applyMatrix4(inclinationMatrix);
   });
 
   const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints3D);
-  const orbitMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+  const orbitMaterial = new THREE.LineBasicMaterial({
+    color: 0x808080,
+    linewidth: .7,
+    opacity: 0.5,
+    transparent: true
+  });
+
   const orbit = new THREE.LineLoop(orbitGeometry, orbitMaterial);
 
   scene.add(orbit);
