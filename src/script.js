@@ -16,10 +16,14 @@ scene.add(background);
 
 // Sun
 const sunGeometry = new THREE.SphereGeometry(1, 32, 16);
-const sunTexture = new THREE.TextureLoader().load("./assets/sun.jpg");
-const sunMaterial = new THREE.MeshLambertMaterial({ map: sunTexture });
+const sunTexture = new THREE.TextureLoader().load('./assets/sun.jpg');
+const sunMaterial = new THREE.MeshLambertMaterial({map: sunTexture, emissive: 0xff9900, emissiveIntensity: .7,});
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 scene.add(sun);
+
+const sunLight = new THREE.PointLight(0xff9900, 10, 30);
+sunLight.position.copy(sun.position);
+scene.add(sunLight);
 
 // Planets
 const planetsData = [
@@ -109,7 +113,7 @@ planetsData.forEach((planetData) => {
 
   const planetGeometry = new THREE.SphereGeometry(radius, 32, 16);
   const planetTexture = new THREE.TextureLoader().load(planetData.texture);
-  const planetMaterial = new THREE.MeshLambertMaterial({ map: planetTexture });
+  const planetMaterial = new THREE.MeshLambertMaterial({map: planetTexture});
   const planet = new THREE.Mesh(planetGeometry, planetMaterial);
   scene.add(planet);
   planetMeshes.push({ mesh: planet, ...planetData });
@@ -141,9 +145,9 @@ planetsData.forEach((planetData) => {
   const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints3D);
   const orbitMaterial = new THREE.LineBasicMaterial({
     color: 0x808080,
-    linewidth: 0.7,
+    linewidth: .7,
     opacity: 0.5,
-    transparent: true,
+    transparent: true
   });
 
   const orbit = new THREE.LineLoop(orbitGeometry, orbitMaterial);
@@ -158,14 +162,13 @@ scene.add(light);
 
 // Sizes
 const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight,
+    width: window.innerWidth,
+    height: window.innerHeight,
 };
 
 // Camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height);
 camera.position.set(0, 20, 55);
-
 scene.add(camera);
 
 // Renderer
@@ -202,32 +205,47 @@ closeButton.addEventListener("click", () => {
   modal.style.display = "none";
 });
 
+const pauseButton = document.getElementById('pauseButton');
+pauseButton.addEventListener('click', () => {
+
+    isAnimationPaused = !isAnimationPaused;
+
+    if (isAnimationPaused) {
+        pauseButton.innerHTML = '<i class="fas fa-play"></i>';
+    } else {
+        pauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+    }
+});
+
+let isAnimationPaused = false;
+
 // Animation
 const animate = () => {
   controls.update();
-  sun.rotation.y += 0.003;
-  sun.rotation.x += 0.001;
-  const elapsedTime = Date.now();
+  if (!isAnimationPaused) {
+    sun.rotation.y += 0.003;
+    sun.rotation.x += 0.001;
 
-  planetMeshes.forEach((planetData) => {
-    const { mesh, distance, speed, inclination = 0 } = planetData;
-    mesh.rotation.y += 0.003;
-    mesh.rotation.x += 0.001;
+    const elapsedTime = Date.now();
 
-    const angle = (elapsedTime * speed) % (2 * Math.PI); // Angle en fonction du temps écoulé
-    const x = Math.cos(angle) * distance;
-    const z = Math.sin(angle) * distance;
+    planetMeshes.forEach((planetData) => {
+      const {mesh, distance, speed, inclination = 0} = planetData;
+      mesh.rotation.y += 0.003;
+      mesh.rotation.x += 0.001;
 
-    // Appliquer l'inclinaison à la position de la planète
-    const inclinationMatrix = new THREE.Matrix4().makeRotationX(inclination);
-    const planetPosition = new THREE.Vector3(x, 0, z);
-    planetPosition.applyMatrix4(inclinationMatrix);
+      const angle = (elapsedTime * speed) % (2 * Math.PI); // Angle en fonction du temps écoulé
+      const x = Math.cos(angle) * distance;
+      const z = Math.sin(angle) * distance;
 
-    mesh.position.copy(planetPosition);
-  });
+      // Appliquer l'inclinaison à la position de la planète
+      const inclinationMatrix = new THREE.Matrix4().makeRotationX(inclination);
+      const planetPosition = new THREE.Vector3(x, 0, z);
+      planetPosition.applyMatrix4(inclinationMatrix);
 
+      mesh.position.copy(planetPosition);
+    });
+  }
   renderer.render(scene, camera);
-
   window.requestAnimationFrame(animate);
 };
 
