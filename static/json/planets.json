@@ -1,28 +1,28 @@
 [
     {
-        "name": "Mercury",
+        "name": "Mercure",
         "radius": 0.05,
         "distance": 4,
         "speed": 0.001,
         "inclination": 0.3926990816987241,
-        "info": "Information about Mercury",
+        "info": "Mercure est une petite planète rocheuse et désolée. Elle possède une surface criblée de cratères d'impact, témoignant de son histoire d'astéroïdes et de météorites bombardant sa surface. En raison de sa proximité avec le Soleil, la température sur Mercure varie énormément, atteignant des extrêmes de chaleur et de froid. Elle ne possède pas d'atmosphère significative et est sujette à de violents flux de particules solaires.",
         "texture": "./assets/mercury.jpg"
     },
     {
-        "name": "Venus",
+        "name": "Vénus",
         "radius": 0.08,
         "distance": 6,
         "speed": 0.0008,
-        "info": "Information about Venus",
+        "info": " Vénus est une planète similaire à la Terre en termes de taille et de composition, mais elle est enveloppée dans une atmosphère dense composée principalement de dioxyde de carbone. Cette atmosphère crée un effet de serre dévastateur, piégeant la chaleur et provoquant des températures extrêmement élevées à la surface, atteignant jusqu'à 450 degrés Celsius. Vénus présente également un paysage volcanique, des montagnes et de vastes plaines.",
         "texture": "./assets/venus.jpg",
         "inclination": 0.3926990816987241
     },
     {
-        "name": "Earth",
+        "name": "Terre",
         "radius": 0.1,
         "distance": 8,
         "speed": 0.0006,
-        "info": "Information about Earth",
+        "info": "Notre planète, la Terre, est unique dans le système solaire car elle est le seul endroit connu à abriter la vie. Avec ses vastes océans, ses continents et son atmosphère riche en oxygène, la Terre offre une grande diversité de paysages, de climats et d'écosystèmes. Elle possède également une lune, qui joue un rôle important dans la stabilisation de l'axe de rotation terrestre et les marées.",
         "texture": "./assets/earth.jpg"
     },
     {
@@ -31,7 +31,7 @@
         "distance": 10,
         "speed": 0.0005,
         "inclination": 0.2617993877991494,
-        "info": "Information about Mars",
+        "info": "Mars est une planète rocheuse souvent appelée la \"planète rouge\" en raison de sa couleur distinctive. Elle possède des volcans massifs, des canyons profonds et des calottes polaires. Des preuves suggèrent que Mars avait autrefois des conditions favorables à la vie, avec des rivières et des lacs. Des missions d'exploration récentes ont révélé la présence d'eau gelée sous forme de glace et de possibilités d'habitabilité passée ou présente.",
         "texture": "./assets/mars.jpg"
     },
     {
@@ -39,16 +39,16 @@
         "radius": 0.18,
         "distance": 14,
         "speed": 0.0003,
-        "info": "Information about Jupiter",
+        "info": "Jupiter est une géante gazeuse composée principalement d'hydrogène et d'hélium. C'est la plus grande planète du système solaire et abrite une tempête appelée la \"grande tache rouge\", qui est une immense perturbation atmosphérique. Jupiter possède également de nombreux satellites, dont les plus connus sont les quatre lunes galiléennes : Io, Europe, Ganymède et Callisto.",
         "texture": "./assets/jupiter.jpg"
     },
     {
-        "name": "Saturn",
+        "name": "Saturne",
         "radius": 0.15,
         "distance": 18,
         "speed": 0.0002,
         "inclination": 0.1963495408493621,
-        "info": "Information about Saturn",
+        "info": "Saturne est une autre géante gazeuse avec un système d'anneaux spectaculaire qui entoure la planète. Ces anneaux sont constitués de fragments de glace et de roche. Saturne possède également de nombreuses lunes, dont Titan, qui est la deuxième plus grande lune du système solaire et possède une atmosphère dense. La surface de Saturne est une couche d'hydrogène et d'hélium.",
         "texture": "./assets/saturn.jpg"
     },
     {
@@ -56,7 +56,7 @@
         "radius": 0.12,
         "distance": 22,
         "speed": 0.0001,
-        "info": "Information about Uranus",
+        "info": "Uranus est une planète gazeuse inclinée sur le côté, ce qui signifie qu'elle tourne pratiquement sur le plan de son orbite. Cela entraîne des saisons extrêmes et de longues périodes de lumière et d'obscurité. Uranus possède un anneau complexe et de nombreuses lunes, dont certaines présentent des caractéristiques uniques. Sa composition est principalement de l'hydrogène et de l'hélium avec des traces de méthane qui lui confèrent une teinte bleu-vert distincte.",
         "texture": "./assets/uranus.jpg"
     },
     {
@@ -64,7 +64,7 @@
         "radius": 0.11,
         "distance": 26,
         "speed": 0.00008,
-        "info": "Information about Neptune",
+        "info": "Neptune est la huitième et dernière planète du système solaire. Elle est une géante gazeuse de couleur bleue en raison de la présence de méthane dans son atmosphère. Neptune est connue pour ses vents violents et sa grande tache sombre appelée \"la grande tache sombre\". Elle possède également une lune importante, Triton, qui est remarquable pour sa surface glacée et son activité géologique.",
         "texture": "./assets/neptune.jpg"
     },
     {
@@ -72,7 +72,7 @@
         "radius": 0.04,
         "distance": 30,
         "speed": 0.00006,
-        "info": "Information about Pluton",
+        "info": "Pluton, autrefois considérée comme la neuvième planète, est maintenant classée en tant que \"planète naine\". Malgré cela, elle continue d'intriguer en tant que destination d'exploration spatiale.",
         "texture": "./assets/pluton.jpg"
     }
 ]
