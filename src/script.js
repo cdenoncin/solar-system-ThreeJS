@@ -18,6 +18,7 @@ const planetsData = [
     radius: 0.05,
     distance: 4,
     speed: 0.001,
+    inclination: Math.PI / 8,
     info: "Information about Mercury",
     texture: "./assets/mercury.jpg",
   },
@@ -28,6 +29,7 @@ const planetsData = [
     speed: 0.0008,
     info: "Information about Venus",
     texture: "./assets/venus.jpg",
+    inclination: Math.PI / 8,
   },
   {
     name: "Earth",
@@ -42,6 +44,7 @@ const planetsData = [
     radius: 0.07,
     distance: 10,
     speed: 0.0005,
+    inclination: Math.PI / 12,
     info: "Information about Mars",
     texture: "./assets/mars.jpg",
   },
@@ -58,6 +61,7 @@ const planetsData = [
     radius: 0.15,
     distance: 18,
     speed: 0.0002,
+    inclination: Math.PI / 16,
     info: "Information about Saturn",
     texture: "./assets/saturn.jpg",
   },
@@ -91,9 +95,11 @@ const planetMeshes = [];
 const orbitLines = [];
 
 planetsData.forEach((planetData) => {
+  // const { radius, distance, speed, inclination = 0 } = planetData;
+
   const planetGeometry = new THREE.SphereGeometry(planetData.radius, 32, 16);
   const planetTexture = new THREE.TextureLoader().load(planetData.texture);
-  const planetMaterial = new THREE.MeshLambertMaterial({ map: planetTexture });
+  const planetMaterial = new THREE.MeshLambertMaterial({map: planetTexture});
   const planet = new THREE.Mesh(planetGeometry, planetMaterial);
   scene.add(planet);
   planetMeshes.push({ mesh: planet, ...planetData });
@@ -108,17 +114,30 @@ planetsData.forEach((planetData) => {
     false,
     0
   );
+
   const orbitPoints = orbitCurve.getPoints(100);
-  const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+
+  // Convertir les points en THREE.Vector3
+  const orbitPoints3D = orbitPoints.map(
+    (point) => new THREE.Vector3(point.x, 0, point.y)
+  );
+
+  // Appliquer l'inclinaison aux points de la trajectoire
+  const inclinationMatrix = new THREE.Matrix4().makeRotationX(inclination);
+  orbitPoints3D.forEach((point) => {
+    point.applyMatrix4(inclinationMatrix);
+  });
+
+  const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints3D);
   const orbitMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
   const orbit = new THREE.LineLoop(orbitGeometry, orbitMaterial);
-  orbit.rotation.x = Math.PI / 2;
+
   scene.add(orbit);
   orbitLines.push(orbit);
 });
 
 // Light
-const light = new THREE.AmbientLight({ color: 0xffffff, intensity: 1 });
+const light = new THREE.AmbientLight({color: 0xffffff, intensity: 1});
 scene.add(light);
 
 // Sizes
@@ -166,19 +185,24 @@ closeButton.addEventListener("click", () => {
 });
 
 // Animation
-
 const animate = () => {
   controls.update();
 
+  const elapsedTime = Date.now();
+
   planetMeshes.forEach((planetData) => {
-    const { mesh, distance, speed } = planetData;
+    const {mesh, distance, speed, inclination = 0} = planetData;
 
-    const angle = Date.now() * speed;
-
+    const angle = (elapsedTime * speed) % (2 * Math.PI); // Angle en fonction du temps écoulé
     const x = Math.cos(angle) * distance;
     const z = Math.sin(angle) * distance;
 
-    mesh.position.set(x, 0, z);
+    // Appliquer l'inclinaison à la position de la planète
+    const inclinationMatrix = new THREE.Matrix4().makeRotationX(inclination);
+    const planetPosition = new THREE.Vector3(x, 0, z);
+    planetPosition.applyMatrix4(inclinationMatrix);
+
+    mesh.position.copy(planetPosition);
   });
 
   renderer.render(scene, camera);
@@ -187,3 +211,16 @@ const animate = () => {
 };
 
 animate();
+
+window.addEventListener("resize", () => {
+  // Mettre à jour les tailles
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  // Mettre à jour la caméra
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  // Mettre à jour le rendu
+  renderer.setSize(sizes.width, sizes.height);
+});
