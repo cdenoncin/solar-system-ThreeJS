@@ -4,6 +4,16 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 // Scene
 const scene = new THREE.Scene();
 
+// Background
+const backgroundGeometry = new THREE.SphereGeometry(100, 32, 16);
+const backgroundTexture = new THREE.TextureLoader().load("./assets/bg.jpg");
+const backgroundMaterial = new THREE.MeshLambertMaterial({
+  map: backgroundTexture,
+  side: THREE.BackSide,
+});
+const background = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
+scene.add(background);
+
 // Sun
 const sunGeometry = new THREE.SphereGeometry(1, 32, 16);
 const sunTexture = new THREE.TextureLoader().load("./assets/sun.jpg");
@@ -99,7 +109,7 @@ planetsData.forEach((planetData) => {
 
   const planetGeometry = new THREE.SphereGeometry(radius, 32, 16);
   const planetTexture = new THREE.TextureLoader().load(planetData.texture);
-  const planetMaterial = new THREE.MeshLambertMaterial({map: planetTexture});
+  const planetMaterial = new THREE.MeshLambertMaterial({ map: planetTexture });
   const planet = new THREE.Mesh(planetGeometry, planetMaterial);
   scene.add(planet);
   planetMeshes.push({ mesh: planet, ...planetData });
@@ -131,9 +141,9 @@ planetsData.forEach((planetData) => {
   const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints3D);
   const orbitMaterial = new THREE.LineBasicMaterial({
     color: 0x808080,
-    linewidth: .7,
+    linewidth: 0.7,
     opacity: 0.5,
-    transparent: true
+    transparent: true,
   });
 
   const orbit = new THREE.LineLoop(orbitGeometry, orbitMaterial);
@@ -143,7 +153,7 @@ planetsData.forEach((planetData) => {
 });
 
 // Light
-const light = new THREE.AmbientLight({color: 0xffffff, intensity: 1});
+const light = new THREE.AmbientLight({ color: 0xffffff, intensity: 1 });
 scene.add(light);
 
 // Sizes
@@ -154,7 +164,8 @@ const sizes = {
 
 // Camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height);
-camera.position.set(0, 0, 40);
+camera.position.set(0, 20, 55);
+
 scene.add(camera);
 
 // Renderer
@@ -164,6 +175,7 @@ renderer.setSize(sizes.width, sizes.height);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
+controls.maxDistance = 100;
 controls.enableDamping = true;
 
 // Modal
@@ -193,11 +205,14 @@ closeButton.addEventListener("click", () => {
 // Animation
 const animate = () => {
   controls.update();
-
+  sun.rotation.y += 0.003;
+  sun.rotation.x += 0.001;
   const elapsedTime = Date.now();
 
   planetMeshes.forEach((planetData) => {
-    const {mesh, distance, speed, inclination = 0} = planetData;
+    const { mesh, distance, speed, inclination = 0 } = planetData;
+    mesh.rotation.y += 0.003;
+    mesh.rotation.x += 0.001;
 
     const angle = (elapsedTime * speed) % (2 * Math.PI); // Angle en fonction du temps écoulé
     const x = Math.cos(angle) * distance;
