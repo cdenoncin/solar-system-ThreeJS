@@ -37,13 +37,10 @@ const planetInfo = document.getElementById("planet-info");
 const scene = new THREE.Scene();
 
 // Background
-// createBackground();
+createBackground();
 
 // Sun
 createSun();
-
-// create glow
-glow();
 
 // Light
 createLight();
@@ -125,20 +122,6 @@ function createSun() {
   scene.add(sunLight);
 }
 
-function glow() {
-  console.log("oui");
-  const map = new THREE.TextureLoader().load("./assets/glow.png");
-  const material = new THREE.SpriteMaterial({ map: map, useScreenCoordinates: false, 
-    color: 0xFF6600, 
-      transparent: false, 
-      blending: THREE.AdditiveBlending,
-   });
-
-  const sprite = new THREE.Sprite(material);
-  sprite.scale.set(5, 5, 1);
-  scene.add(sprite);
-}
-
 function getRandomPointInSphere(radius) {
   const u = Math.random(); // Valeur aléatoire entre 0 et 1
   const v = Math.random(); // Valeur aléatoire entre 0 et 1
@@ -180,16 +163,19 @@ function createCamera() {
   scene.add(camera);
 }
 
-// function createBackground() {
-//   const backgroundGeometry = new THREE.SphereGeometry(100, 32, 16);
-//   const backgroundTexture = new THREE.TextureLoader().load("./assets/bg.jpg");
-//   const backgroundMaterial = new THREE.MeshLambertMaterial({
-//     map: backgroundTexture,
-//     side: THREE.BackSide,
-//   });
-//   const background = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
-//   scene.add(background);
-// }
+function createBackground() {
+  const backgroundGeometry = new THREE.SphereGeometry(100, 32, 16);
+  const backgroundTexture = new THREE.TextureLoader().load("./assets/bg.jpg");
+  const backgroundMaterial = new THREE.MeshLambertMaterial({
+    map: backgroundTexture,
+    side: THREE.BackSide,
+  });
+  const background = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
+  scene.add(background);
+}
+
+// create glow
+glow();
 
 function createPlanets() {
   planetsData.forEach((planetData) => {
@@ -249,7 +235,7 @@ function createPlanets() {
 
 function createControls() {
   controls = new OrbitControls(camera, canvas);
-  //   controls.maxDistance = 100;
+  controls.maxDistance = 100;
   controls.enableDamping = true;
 }
 
@@ -359,4 +345,20 @@ function toggleOrbitLinesVisibility() {
     ? "Masquer les lignes d'orbite"
     : "Afficher les lignes d'orbite";
   toggleOrbitLinesButton.setAttribute("title", buttonText);
+}
+
+function glow() {
+  console.log("oui");
+  const map = new THREE.TextureLoader().load("./assets/glow.png");
+  const material = new THREE.SpriteMaterial({
+    map: map,
+    color: 0xff6600,
+    transparent: true,
+    side: THREE.FrontSide,
+    blending: THREE.AdditiveBlending,
+  });
+
+  const sprite = new THREE.Sprite(material);
+  sprite.scale.set(5, 5, 1);
+  scene.add(sprite);
 }
