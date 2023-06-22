@@ -23,7 +23,7 @@ body {
     height: 100%;
     overflow: auto;
     transition: all 3s ease-in-out;
-    /* background-color: rgba(0, 0, 0, 0.5); */
+     /*background-color: rgba(0, 0, 0, 0.5);*/
 }
 
 .modal-content {
